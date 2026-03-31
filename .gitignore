@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+
+# PyCharm
+.idea/
+*.iml
+
+# 数据文件（太大）
+data/raw/*.shp
+data/raw/*.dbf
+data/raw/*.shx
+data/raw/*.prj
+data/raw/*.cpg
+
+# 输出成果
+output/figures/*.png
+output/reports/
+
+# 本地配置
+config_local.py
+
+# 系统文件
+.DS_Store
+Thumbs.db
