@@ -96,7 +96,28 @@
         └── **settlement_distribution.png**
 
 ## 核心SQL示例
-<img src="F:\settlement_monitoring_system\image-20260331151929700.png" alt="image-20260331151929700" style="zoom: 67%;" />
+```sql
+-- 空间查询：查找某点附近500米内的测点
+SELECT 
+    a.point_name,
+    b.point_name as nearby_point,
+    ST_Distance(a.geom::geography, b.geom::geography) as distance_m
+FROM survey_points a
+JOIN survey_points b ON a.point_name != b.point_name
+WHERE a.point_name = 'SP-01'
+  AND ST_DWithin(a.geom::geography, b.geom::geography, 500);
+
+-- 沉降统计：最大沉降量前10位
+SELECT 
+    s.point_name,
+    s.chainage,
+    MAX(o.cumulative_settlement) as max_settlement
+FROM survey_points s
+JOIN settlement_observations o ON s.point_name = o.point_name
+GROUP BY s.point_name, s.chainage
+ORDER BY max_settlement DESC
+LIMIT 10;
+```
 
 ## 成果展示
 - **沉降时间曲线**
