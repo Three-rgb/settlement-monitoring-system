@@ -34,10 +34,10 @@
 
 ## 技术栈
 
-- **数据库**：PostgreSQL 16 + PostGIS 3.6
-- **数据处理**：Python 3.8+, pandas, SQLAlchemy, GeoPandas
-- **可视化**：matplotlib
-- **数据源**：OpenStreetMap (OSM)
+- **数据库**：**PostgreSQL 16 + PostGIS 3.6**
+- **数据处理**：**Python, pandas, SQLAlchemy, GeoPandas**
+- **可视化**：**matplotlib**
+- **数据源**：**OpenStreetMap (OSM)**
 
 ## 快速开始
 
@@ -66,10 +66,10 @@
 - **完整流程**
 - **python main.py**
 - **或分步执行：**
-- **python -m src.data_generator    # 生成数据**
-- **python -m src.data_import       # 导入数据库**
-- **python -m src.analysis          # 数据分析**
-- **python -m src.visualization     # 生成图表**
+- **python -m src.data_generator    # 根据osm道路文件生成数据**
+- **python -m src.data_import       # 自动化数据导入与清洗**
+- **python -m src.analysis          # 沉降趋势分析与预警**
+- **python -m src.visualization     # 生成可视化图表**
 
 ## 项目结构
 
