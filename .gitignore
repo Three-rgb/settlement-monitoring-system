@@ -17,10 +17,6 @@ data/raw/*.shx
 data/raw/*.prj
 data/raw/*.cpg
 
-# 输出成果
-output/figures/*.png
-output/reports/
-
 # 本地配置
 config_local.py
 
