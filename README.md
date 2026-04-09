@@ -17,7 +17,7 @@
 
 ## 系统架构图
 
-![](README.assets\架构图-17757008275611-17757023232567.png)
+![](https://github.com/Three-rgb/settlement-monitoring-system/blob/main/docs/架构图.png)
 
 ## 数据工程特性
 
