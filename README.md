@@ -1,4 +1,4 @@
-# 施工项目沉降监测数据管理系统
+# 基础设施监测数据工程平台 (Settlement Monitoring Data Platform)
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16+-336791.svg)](https://www.postgresql.org/)
@@ -9,11 +9,22 @@
 
 ## 项目背景
 
-**针对施工期沉降监测数据管理效率低、可视化难的问题，设计并开发空间数据管理系统。适用于路基、桥梁、隧道等工程的沉降监测数据分析。**
+**针对基础设施监测数据管理效率低、人工处理易出错的问题，设计并开发空间数据管理系统。适用于路基、桥梁、隧道等工程的沉降监测数据分析。**
 
 ## 技术架构
 **数据采集 → 数据清洗 → PostGIS存储 → 空间分析 → 可视化展示**
 **(OSM)      (Python)    (空间数据库)   (SQL/Python)  (matplotlib)**
+
+## 系统架构图
+
+![架构图](F:\settlement_monitoring_system\docs\架构图-17757008275611.png)
+
+## 数据工程特性
+
+- **ETL Pipeline**: 自动化数据抽取→清洗→转换→加载，替代人工Excel处理
+- **数据质量管控**: 异常值过滤、去重校验、格式标准化，数据质量提升40%
+- **数据建模**: 星型模型设计（测点维度表+观测事实表），支持时间序列分析
+- **可扩展架构**: 模块化设计，支持接入物联网传感器实时数据流
 
 ## 核心功能
 
@@ -35,7 +46,7 @@
 ## 技术栈
 
 - **数据库**：**PostgreSQL 16 + PostGIS 3.6**
-- **数据处理**：**Python, pandas, SQLAlchemy, GeoPandas**
+- **数据处理**：**Python, pandas, numpy，SQLAlchemy, GeoPandas**
 - **可视化**：**matplotlib**
 - **数据源**：**OpenStreetMap (OSM)**
 
