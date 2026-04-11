@@ -17,7 +17,7 @@
 
 ## 系统架构图
 
-![架构图](F:\settlement_monitoring_system\README.assets\架构图-17757039276311-17757039469324.png)
+![架构图](README.assets/架构图-17757039276311-17757039469324.png)
 
 ## 数据工程特性
 
