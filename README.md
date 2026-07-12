@@ -49,10 +49,21 @@
 - **数据处理**：**Python, pandas, numpy，SQLAlchemy, GeoPandas**
 - **可视化**：**matplotlib**
 - **数据源**：**OpenStreetMap (OSM)**
+- **调度（可选）**：**Apache Airflow 2.10 + DockerOperator**
 
 ## 快速开始
 
-### ⚡ Docker（推荐）
+本项目有 **两种使用方式**，按场景选择：
+
+| 场景 | 推荐方式 | 命令 |
+|---|---|---|
+| 本地开发 / 调试 / 单次运行 | **Python 直接跑**（最快） | `python main.py` |
+| 演示工程化 / 面试讲 Docker + Airflow / 团队协作 | **Docker 容器化**（环境一致） | `docker compose up -d && docker compose run --rm monitoring-app` |
+| 定时调度 / 失败重试 / Backfill 回填 | **Airflow 编排**（可观测） | `cd airflow && docker compose up -d` |
+
+> ⚠️ **重要**：Airflow 不是日常开发必需流程，是**面试 demo + 未来扩展备用**。本地写代码 / 调试时直接 `python main.py` 即可。详见下面的 [Airflow 编排（可选）](#-airflow-编排可选) 章节。
+
+### ⚡ Docker（推荐用于演示）
 
 确保已安装 [Docker](https://docs.docker.com/get-docker/) 和 [Docker Compose](https://docs.docker.com/compose/install/)。
 
@@ -61,7 +72,7 @@
 docker compose up -d
 
 # 2. 运行完整数据流水线
-docker compose run --rm app
+docker compose run --rm monitoring-app
 
 # 3. 查看输出结果（在 host 的 output/ 目录下）
 ls output/figures/
@@ -69,17 +80,72 @@ ls output/reports/
 ls output/training/
 
 # 4. 单独运行某个模块
-docker compose run --rm app python -m src.analysis
-docker compose run --rm app python -m src.visualization
-docker compose run --rm app python -m src.training_dataset_export
+docker compose run --rm monitoring-app python -m src.analysis
+docker compose run --rm monitoring-app python -m src.visualization
+docker compose run --rm monitoring-app python -m src.training_dataset_export
 
 # 5. 停止并清理
 docker compose down
 ```
 
-> **注意**：`docker compose up -d` 启动数据库后，使用 `docker compose run --rm app` 运行完整数据流水线。输出文件保存在 `output/` 目录下，可在宿主机直接查看。
+> **注意**：`docker compose up -d` 启动数据库后，使用 `docker compose run --rm monitoring-app` 运行完整数据流水线。输出文件保存在 `output/` 目录下，可在宿主机直接查看。
 
-### 1. 环境要求
+### 🌀 Airflow 编排（可选）
+
+完整的流水线也可由 Apache Airflow 调度执行，详见 [airflow/README.md](airflow/README.md)。架构概览：
+
+```
+Airflow Webserver / Scheduler  (airflow/docker-compose.yml)
+        │
+        ↓ 挂载 Docker socket + DAG 文件
+DAG: settlement_pipeline (dags/settlement_pipeline_dag.py)
+        │
+        ↓ DockerOperator 启动临时容器
+任务容器（settlement-app:latest）
+        ├─ import_data              ← python -m src.data_import
+        ├─ analyze                  ← python -m src.analysis
+        ├─ visualize      ┐ 并行
+        └─ export_training┘
+        ↳ 通过 host.docker.internal:5432 访问 db
+```
+
+**快速启动**：
+
+```bash
+# 1. 启动业务数据库 + 构建应用镜像
+docker compose up -d db
+docker compose build monitoring-app
+
+# 2. 配置 Airflow 环境
+cd airflow
+cp .env.example .env                    # 编辑 HOST_REPO_ROOT
+docker compose build
+docker compose up -d
+
+# 3. 浏览器访问 http://localhost:8080
+#    账号 / 密码: airflow / airflow
+#    找到 settlement_pipeline → 点 ▶️ 触发
+```
+
+**价值定位**：
+
+| 能力 | 直接跑 Python | Docker Compose | Airflow |
+|---|---|---|---|
+| 单次执行 | ✅ | ✅ | ✅ |
+| 环境一致 | ❌ | ✅ | ✅ |
+| 定时调度 | ❌ | ❌ | ✅ |
+| 失败重试 | ❌ | ❌ | ✅（单 Task 粒度）|
+| UI 监控 | ❌ | ❌ | ✅ |
+| Backfill 回填 | ❌ | ❌ | ✅ |
+| 面试加分 | 🟡 | ✅ | ✅✅ |
+
+**实际效果**（DAG 触发后的 Grid 视图，4 个 Task 全绿）：
+
+![Airflow DAG 运行成功](README.assets/settlement_pipeline.png)
+
+> 截图说明：左侧 Grid 视图显示两次 DAG Run（手动触发 + scheduled 回填），4 个 Task 全部 success；右侧 DAG Runs Summary 显示 Total Runs=2、Total Success=2、平均时长 20s。
+
+### 1. 环境要求（本地 Python 方式）
 - Python 3.8+
 - PostgreSQL 16+
 - PostGIS 3.6+
@@ -195,6 +261,17 @@ LIMIT 10;
 - **桥梁健康监测**
 - **隧道变形分析**
 - **智慧城市基础设施管理**
-- **许可证:MIT License**
-- **作者:GitHub: @Three-rgb**
-- **项目链接: https://github.com/Three-rgb/settlement-monitoring-system**
+
+## 学习与面试
+
+📘 [docs/learning/GUIDE.md](docs/learning/GUIDE.md) — 包含：
+- **项目心智模型**（10 分钟理解全貌）
+- **面试讲解稿**（1 分钟 / 3-5 分钟两个版本 + 6 个高频 Q&A）
+- **2-3 天速成计划**（Day 0/1/2/3 执行清单）
+- **面试展示顺序**（5 步演示流）
+- **7 章课程大纲**（系统学习路径）
+
+## 许可证与作者
+- **许可证**: MIT License
+- **作者**: GitHub [@Three-rgb](https://github.com/Three-rgb)
+- **项目链接**: https://github.com/Three-rgb/settlement-monitoring-system
