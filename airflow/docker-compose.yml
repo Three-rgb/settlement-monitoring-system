@@ -1,0 +1,122 @@
+# Airflow 本地编排（独立于业务 docker-compose.yml）
+#
+# 启动顺序：
+#   1. cd 项目根目录
+#   2. docker compose up -d db monitoring-app  （启 PostgreSQL + 构建业务镜像）
+#   3. cd airflow
+#   4. cp .env.example .env  并填写 HOST_REPO_ROOT
+#   5. docker compose up -d
+#   6. 浏览器打开 http://localhost:8080  （账号 airflow / airflow）
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: airflow-postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - airflow-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # 一次性初始化：执行数据库 migration 后自动退出
+  airflow-init:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: airflow-init
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    # 用列表形式而不是 bash -c，避免 YAML 多行折叠问题
+    command:
+      - bash
+      - -c
+      - >-
+        airflow db migrate &&
+        airflow users create
+        --username airflow
+        --password airflow
+        --firstname Air
+        --lastname Flow
+        --role Admin
+        --email airflow@example.com
+    restart: "no"
+
+  airflow-webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: airflow-webserver
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAG_FILE_PROCESSOR_TIMEOUT: 120
+      # 注入到 DAG 任务容器，告知 DockerOperator 仓库根在宿主机的位置
+      HOST_REPO_ROOT: ${HOST_REPO_ROOT}
+      DB_PASSWORD: ${DB_PASSWORD:-123456}
+    volumes:
+      # DAG 文件挂载到 Airflow 标准目录
+      - ../dags:/opt/airflow/dags:ro
+      # 业务数据库的 schema 脚本（仅 init_db 任务用得到）
+      - ../sql:/opt/airflow/sql:ro
+      # Docker socket：Airflow 通过 daemon API 启动任务容器
+      - /var/run/docker.sock:/var/run/docker.sock
+      # 日志持久化
+      - airflow-logs:/opt/airflow/logs
+    ports:
+      - "8080:8080"
+    command: webserver
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  airflow-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: airflow-scheduler
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+      airflow-webserver:
+        condition: service_started
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      HOST_REPO_ROOT: ${HOST_REPO_ROOT}
+      DB_PASSWORD: ${DB_PASSWORD:-123456}
+    volumes:
+      - ../dags:/opt/airflow/dags:ro
+      - ../sql:/opt/airflow/sql:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - airflow-logs:/opt/airflow/logs
+    command: scheduler
+    restart: unless-stopped
+
+volumes:
+  airflow-postgres:
+  airflow-logs:

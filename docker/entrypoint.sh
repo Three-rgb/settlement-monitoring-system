@@ -7,9 +7,22 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}   Settlement Monitoring Data Platform${NC}"
-echo -e "${GREEN}========================================${NC}"
+banner() {
+    echo -e "${GREEN}========================================${NC}"
+    echo -e "${GREEN}   Settlement Monitoring Data Platform${NC}"
+    echo -e "${GREEN}========================================${NC}"
+}
+
+# Airflow 任务模式：如果传入参数，则直接 exec，不再执行默认流水线
+# 例如：docker run settlement-app:latest python -m src.data_import
+if [ "$#" -gt 0 ]; then
+    echo -e "${YELLOW}[Airflow Task Mode]${NC} exec: $*"
+    exec "$@"
+fi
+
+banner
+
+# 默认模式：完整流水线（与原 docker compose run --rm app 行为一致）
 
 # Step 1: Wait for PostgreSQL to be ready
 echo -e "\n${YELLOW}[Step 1] Waiting for PostgreSQL${NC}"
@@ -29,9 +42,8 @@ echo -e "\n${YELLOW}[Step 3] Running data pipeline${NC}"
 python main.py
 
 # Step 4: Show results
-echo -e "\n${GREEN}========================================${NC}"
-echo -e "${GREEN}   Pipeline completed successfully!${NC}"
-echo -e "${GREEN}========================================${NC}"
+banner
+echo -e "Pipeline completed successfully!"
 echo -e "\nOutput files can be found in:"
 echo -e "  ${YELLOW}output/figures/${NC}         - Visualization charts"
 echo -e "  ${YELLOW}output/reports/${NC}         - Data quality reports"

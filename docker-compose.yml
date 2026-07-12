@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgis/postgis:16-3.6
+    image: postgis/postgis:16-3.4
     container_name: settlement-db
     environment:
       POSTGRES_DB: construction_db
@@ -19,6 +19,7 @@ services:
 
   monitoring-app:
     build: .
+    image: settlement-app:latest
     container_name: settlement-monitoring
     depends_on:
       db:
