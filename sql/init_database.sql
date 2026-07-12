@@ -37,6 +37,10 @@ CREATE TABLE settlement_observations (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 业务主键：同一测点同一天只保留一条观测
+ALTER TABLE settlement_observations
+    ADD CONSTRAINT uq_settlement_point_date UNIQUE (point_name, obs_date);
+
 -- 普通索引
 CREATE INDEX idx_settlement_point ON settlement_observations(point_name);
 CREATE INDEX idx_settlement_date ON settlement_observations(obs_date);
