@@ -6,7 +6,6 @@ plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'Arial Unicode M
 plt.rcParams['axes.unicode_minus'] = False
 
 import pandas as pd
-import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from src.database import get_engine
 
@@ -63,11 +62,10 @@ def plot_settlement_curves(output_path='output/figures/settlement_curves.png'):
     plt.suptitle('施工期沉降观测曲线', fontsize=14, fontweight='bold', y=1.02)
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
-    print(f"✅ 沉降曲线图已保存: {output_path}")
+    print(f"[OK] 沉降曲线图已保存: {output_path}")
     plt.show()
 
     return output_path
-
 
 def plot_settlement_distribution(output_path='output/figures/settlement_distribution.png'):
     """绘制沉降分布统计图"""
@@ -75,32 +73,46 @@ def plot_settlement_distribution(output_path='output/figures/settlement_distribu
 
     summary = get_settlement_summary()
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 10))  # 加高
 
-    # 左图：最大沉降量分布
+    # 左图：最大沉降量分布（不变）
     ax1.hist(summary['max_settlement'], bins=10, color='steelblue', alpha=0.7, edgecolor='black')
     ax1.set_xlabel('最大沉降量(mm)', fontsize=11)
     ax1.set_ylabel('测点数量', fontsize=11)
     ax1.set_title('最大沉降量分布', fontsize=12, fontweight='bold')
     ax1.grid(True, alpha=0.3)
 
-    # 右图：沉降量排序
+    # 右图：沉降量排序（优化版）
     summary_sorted = summary.sort_values('max_settlement', ascending=True)
     y_pos = range(len(summary_sorted))
-    ax2.barh(y_pos, summary_sorted['max_settlement'], color='coral', alpha=0.7)
-    ax2.set_yticks(y_pos[::5])  # 每5个显示一个
-    ax2.set_yticklabels(summary_sorted['point_name'].iloc[::5], fontsize=8)
+
+    # 绘制条形
+    bars = ax2.barh(y_pos, summary_sorted['max_settlement'], color='coral', alpha=0.7)
+
+    # 全部标签，字体小
+    ax2.set_yticks(y_pos)
+    ax2.set_yticklabels(summary_sorted['point_name'], fontsize=5)
+
     ax2.set_xlabel('最大沉降量(mm)', fontsize=11)
-    ax2.set_title('各测点最大沉降量', fontsize=12, fontweight='bold')
+    ax2.set_title('各测点最大沉降量（全排名）', fontsize=12, fontweight='bold')
     ax2.grid(True, alpha=0.3, axis='x')
+
+    # 添加数值标签在条形右侧
+    for i, (idx, row) in enumerate(summary_sorted.iterrows()):
+        ax2.text(float(row['max_settlement']) + 0.5, i,
+                 f"{row['max_settlement']:.1f}",
+                 va='center', fontsize=5)
 
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
-    print(f"✅ 沉降分布图已保存: {output_path}")
+    print(f"[OK] 沉降分布图已保存: {output_path}")
+
+    # 打印完整排名表
+    print("\n完整排名：")
+    print(summary_sorted[['point_name', 'max_settlement']].to_string())
+
     plt.show()
-
     return output_path
-
 
 def main():
     """生成所有可视化成果"""

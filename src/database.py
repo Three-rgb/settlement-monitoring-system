@@ -24,11 +24,11 @@ def test_connection():
         with engine.connect() as conn:
             result = conn.execute(text("SELECT version()"))
             version = result.scalar()
-            print(f"✅ 数据库连接成功")
+            print("[OK] 数据库连接成功")
             print(f"   PostgreSQL版本: {version[:50]}...")
             return True
     except Exception as e:
-        print(f"❌ 数据库连接失败: {e}")
+        print(f"[FAIL] 数据库连接失败: {e}")
         return False
 
 
@@ -38,9 +38,3 @@ def execute_query(query, params=None):
     with engine.connect() as conn:
         result = conn.execute(text(query), params or {})
         return result.fetchall()
-
-
-def get_table_count(table_name):
-    """获取表记录数"""
-    result = execute_query(f"SELECT COUNT(*) FROM {table_name}")
-    return result[0][0] if result else 0

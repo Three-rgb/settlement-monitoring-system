@@ -17,7 +17,7 @@
 
 ## 系统架构图
 
-![架构图](README.assets/架构图-17757039276311-17757039469324.png)
+![架构图](README.assets/架构图.png)
 
 ## 数据工程特性
 
@@ -51,6 +51,33 @@
 - **数据源**：**OpenStreetMap (OSM)**
 
 ## 快速开始
+
+### ⚡ Docker（推荐）
+
+确保已安装 [Docker](https://docs.docker.com/get-docker/) 和 [Docker Compose](https://docs.docker.com/compose/install/)。
+
+```bash
+# 1. 构建并启动数据库服务
+docker compose up -d
+
+# 2. 运行完整数据流水线
+docker compose run --rm app
+
+# 3. 查看输出结果（在 host 的 output/ 目录下）
+ls output/figures/
+ls output/reports/
+ls output/training/
+
+# 4. 单独运行某个模块
+docker compose run --rm app python -m src.analysis
+docker compose run --rm app python -m src.visualization
+docker compose run --rm app python -m src.training_dataset_export
+
+# 5. 停止并清理
+docker compose down
+```
+
+> **注意**：`docker compose up -d` 启动数据库后，使用 `docker compose run --rm app` 运行完整数据流水线。输出文件保存在 `output/` 目录下，可在宿主机直接查看。
 
 ### 1. 环境要求
 - Python 3.8+
