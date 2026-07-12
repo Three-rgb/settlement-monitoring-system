@@ -1,0 +1,9 @@
+pandas
+numpy
+SQLAlchemy
+psycopg2-binary
+matplotlib
+geopandas
+shapely
+pyproj
+python-dotenv

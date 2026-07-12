@@ -1,0 +1,17 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.git/
+.gitignore
+.gitkeep
+.idea/
+.cursor_learning/
+README.assets/
+QGIS_visualize.png
+.env
+*.md
+.dockerignore
+Dockerfile
+docker-compose.yml
