@@ -23,3 +23,7 @@ config_local.py
 # 系统文件
 .DS_Store
 Thumbs.db
+
+# 个人学习笔记 / Cursor AI 学习记录（不进入版本库）
+docs/learning/
+.cursor_learning/
