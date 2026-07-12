@@ -1,7 +1,7 @@
 {
   "dataset": "settlement_observations",
-  "generated_at": "2026-05-09T15:06:41",
-  "input_path": "F:\\settlement_monitoring_system\\data\\settlement_observations.csv",
+  "generated_at": "2026-07-12T17:15:27",
+  "input_path": "f:\\settlement_monitoring_system\\data\\settlement_observations.csv",
   "primary_key": [
     "point_name",
     "obs_date"
