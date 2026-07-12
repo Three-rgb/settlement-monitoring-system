@@ -1,0 +1,28 @@
+{
+  "dataset": "settlement_observations",
+  "generated_at": "2026-04-12T20:09:15",
+  "input_path": "f:\\settlement_monitoring_system\\data\\settlement_observations.csv",
+  "primary_key": [
+    "point_name",
+    "obs_date"
+  ],
+  "metrics": {
+    "total_rows": 600,
+    "duplicate_rows": 0,
+    "missing_cells": 0,
+    "missing_rate": 0.0,
+    "duplicate_rate": 0.0
+  },
+  "column_missing": {
+    "point_name": 0,
+    "obs_date": 0,
+    "period": 0,
+    "settlement_rate": 0,
+    "cumulative_settlement": 0,
+    "remark": 0
+  },
+  "notes": {
+    "dropped_rows": 0,
+    "deduped_rows": 0
+  }
+}

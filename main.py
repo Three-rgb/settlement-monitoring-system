@@ -12,6 +12,7 @@ from src.database import test_connection
 from src.data_import import main as import_data
 from src.analysis import generate_report
 from src.visualization import main as generate_visualization
+from src.training_dataset_export import export_training_datasets
 
 
 def full_pipeline():
@@ -42,6 +43,12 @@ def full_pipeline():
     # 4. 可视化
     print("\n【步骤4】生成可视化成果")
     generate_visualization()
+
+    # 5. 导出训练/评测数据集（面试导向）
+    print("\n【步骤5】导出训练/评测数据集")
+    paths = export_training_datasets()
+    print(f"[OK] SFT数据集: {paths['sft']}")
+    print(f"[OK] Eval数据集: {paths['eval']}")
 
     print("\n" + "=" * 60)
     print("全部流程执行完成！")

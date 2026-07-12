@@ -1,0 +1,27 @@
+{
+  "dataset": "survey_points",
+  "generated_at": "2026-07-12T16:28:10",
+  "input_path": "f:\\settlement_monitoring_system\\data\\survey_points.csv",
+  "primary_key": [
+    "point_name"
+  ],
+  "metrics": {
+    "total_rows": 50,
+    "duplicate_rows": 0,
+    "missing_cells": 0,
+    "missing_rate": 0.0,
+    "duplicate_rate": 0.0
+  },
+  "column_missing": {
+    "point_name": 0,
+    "chainage": 0,
+    "x_coord": 0,
+    "y_coord": 0,
+    "h_initial": 0,
+    "point_type": 0
+  },
+  "notes": {
+    "dropped_rows": 0,
+    "deduped_rows": 0
+  }
+}
