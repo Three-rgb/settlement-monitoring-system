@@ -38,6 +38,13 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      # ── SMTP 邮件告警 ──
+      AIRFLOW__SMTP__SMTP_HOST: smtp.qq.com
+      AIRFLOW__SMTP__SMTP_PORT: "587"
+      AIRFLOW__SMTP__SMTP_USER: 3075758453@qq.com
+      AIRFLOW__SMTP__SMTP_PASSWORD: ${SMTP_PASSWORD}
+      AIRFLOW__SMTP__SMTP_MAIL_FROM: 3075758453@qq.com
+      # 587 端口使用 STARTTLS（显式 TLS），False 时 Airflow 自动调用 starttls()
     # 用列表形式而不是 bash -c，避免 YAML 多行折叠问题
     command:
       - bash
@@ -68,6 +75,13 @@ services:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__DAG_FILE_PROCESSOR_TIMEOUT: 120
+      # ── SMTP 邮件告警 ──
+      AIRFLOW__SMTP__SMTP_HOST: smtp.qq.com
+      AIRFLOW__SMTP__SMTP_PORT: "587"
+      AIRFLOW__SMTP__SMTP_USER: 3075758453@qq.com
+      AIRFLOW__SMTP__SMTP_PASSWORD: ${SMTP_PASSWORD}
+      AIRFLOW__SMTP__SMTP_MAIL_FROM: 3075758453@qq.com
+      # 587 端口使用 STARTTLS（显式 TLS），False 时 Airflow 自动调用 starttls()
       # 注入到 DAG 任务容器，告知 DockerOperator 仓库根在宿主机的位置
       HOST_REPO_ROOT: ${HOST_REPO_ROOT}
       DB_PASSWORD: ${DB_PASSWORD:-123456}
@@ -107,6 +121,13 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      # ── SMTP 邮件告警 ──
+      AIRFLOW__SMTP__SMTP_HOST: smtp.qq.com
+      AIRFLOW__SMTP__SMTP_PORT: "587"
+      AIRFLOW__SMTP__SMTP_USER: 3075758453@qq.com
+      AIRFLOW__SMTP__SMTP_PASSWORD: ${SMTP_PASSWORD}
+      AIRFLOW__SMTP__SMTP_MAIL_FROM: 3075758453@qq.com
+      # 587 端口使用 STARTTLS（显式 TLS），False 时 Airflow 自动调用 starttls()
       HOST_REPO_ROOT: ${HOST_REPO_ROOT}
       DB_PASSWORD: ${DB_PASSWORD:-123456}
     volumes:

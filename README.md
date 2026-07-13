@@ -145,6 +145,16 @@ docker compose up -d
 
 > 截图说明：左侧 Grid 视图显示两次 DAG Run（手动触发 + scheduled 回填），4 个 Task 全部 success；右侧 DAG Runs Summary 显示 Total Runs=2、Total Success=2、平均时长 20s。
 
+#### 📧 邮件告警
+
+DAG 已配置任务失败 / 重试时自动发送告警邮件到指定邮箱（需在 `airflow/.env` 中填写 SMTP 授权码）。
+
+**配置方式**：`airflow/.env` 中设置 `SMTP_PASSWORD=xxx`（QQ邮箱 → 设置 → 账户 → 生成授权码）。
+
+**告警效果**（任务失败后自动发出的邮件）：
+
+![Airflow 邮件告警](README.assets/settlement_pipeline_邮件告警.png)
+
 ### 1. 环境要求（本地 Python 方式）
 - Python 3.8+
 - PostgreSQL 16+
