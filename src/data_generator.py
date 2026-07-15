@@ -106,8 +106,8 @@ def generate_survey_points(road_geom, interval=50, start_chainage=0):
         })
 
     df = gpd.GeoDataFrame(points, crs='EPSG:4326')
-    actual_coverage = n_points * interval
-    print(f"   生成 {len(df)} 个测点，间距 {interval} 米，覆盖 {actual_coverage} 米")
+    actual_spacing = total_length // (n_points - 1) if n_points > 1 else 0
+    print(f"   生成 {len(df)} 个测点，均匀分布在全线 {total_length:.0f} 米（间距约 {actual_spacing:.0f} 米）")
     return df
 
 
